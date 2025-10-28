@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/goravel/framework/database/orm"
+	"karuhundeveloper.com/gogo/app/models/spatie"
 )
 
 type User struct {
@@ -9,4 +10,5 @@ type User struct {
 	Name     string
 	Email    string
 	Password string
+	File 	 *spatie.Media `gorm:"polymorphic:Model"`
 }
