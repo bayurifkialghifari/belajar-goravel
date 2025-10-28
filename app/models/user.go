@@ -10,5 +10,5 @@ type User struct {
 	Name     string
 	Email    string
 	Password string
-	File 	 *spatie.Media `gorm:"polymorphic:Model"`
+	File 	 *spatie.Media `gorm:"polymorphic:Model;polymorphicValue:user"`
 }

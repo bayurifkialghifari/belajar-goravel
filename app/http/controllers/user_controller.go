@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/goravel/framework/contracts/http"
+	"github.com/goravel/framework/errors"
 	"github.com/goravel/framework/facades"
 	"karuhundeveloper.com/gogo/app/models"
 	"karuhundeveloper.com/gogo/app/usecase"
@@ -18,8 +19,24 @@ func NewUserController(mediaUseCase *usecase.MediaUsecase) *UserController {
 }
 
 func (r *UserController) Show(ctx http.Context) http.Response {
+	var user models.User
+
+	// Get user id
+	id := ctx.Request().RouteInt64("id")
+
+	// Find user by id
+	err := facades.Orm().Query().With("File").Where("id", id).Omit("password").FirstOrFail(&user)
+
+	if errors.Is(err, errors.OrmRecordNotFound) {
+		return ctx.Response().Json(http.StatusNotFound, http.Json{
+			"message": "User not found",
+		})
+	}
+
+
 	return ctx.Response().Success().Json(http.Json{
-		"Hello": "Goravel",
+		"message": "User found",
+		"user":    user,
 	})
 }
 
