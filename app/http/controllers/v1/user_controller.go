@@ -4,6 +4,7 @@ import (
 	"github.com/goravel/framework/contracts/http"
 	"github.com/goravel/framework/errors"
 	"github.com/goravel/framework/facades"
+	"karuhundeveloper.com/gogo/app/http/requests/v1/user"
 	"karuhundeveloper.com/gogo/app/models"
 	"karuhundeveloper.com/gogo/app/usecase"
 )
@@ -41,31 +42,82 @@ func (r *UserController) Show(ctx http.Context) http.Response {
 }
 
 func (r *UserController) Create(ctx http.Context) http.Response {
-	// Create new user
-	password, _ := facades.Hash().Make("secretpassword")
-	user := &models.User{
-		Name:     "John Doe",
-		Email:    "jhondoe@gmail.com",
-		Password: password,
+	var userCreateRequest user.UserCreate
+
+	errors, err := ctx.Request().ValidateRequest(&userCreateRequest)
+
+	if err != nil {
+		return ctx.Response().Json(http.StatusBadRequest, http.Json{
+			"message": "Validation error",
+			"error":   err.Error(),
+		})
 	}
-	facades.Orm().Query().Model(&models.User{}).Create(user)
 
-	// Get insert id
-	var userModel models.User
-	facades.Orm().Query().OrderByDesc("id").Limit(1).Get(&userModel)
-	// Upload profile picture
-	media, _ := r.mediaUseCase.UploadMedia(ctx, "file", "pp", "user", userModel.ID)
-
-	// if err != nil {
-	// 	return ctx.Response().Json(http.StatusBadRequest, http.Json{
-	// 		"message": "Failed to upload profile picture",
-	// 		"error":   err.Error(),
-	// 	})
-	// }
+	if errors != nil {
+		return ctx.Response().Json(http.StatusBadRequest, http.Json{
+			"message": "Validation failed",
+			"errors":  errors.All(),
+		})
+	}
 
 	return ctx.Response().Json(http.StatusOK, http.Json{
-		"message": "Profile picture uploaded successfully",
-		"user":	 userModel,
-		"media":   media,
+		"message": "Validation passed",
+		"name":	userCreateRequest.Name,
+		"email":	userCreateRequest.Email,
+		"password":	userCreateRequest.Password,
+		"confirm_password":	userCreateRequest.ConfirmPassword,
 	})
+
+	// Create new user facades.Hash().Make("secretpassword")
+	// user := &models.User{
+	// 	Name:     "John Doe",
+	// 	Email:    "jhondoe@gmail.com",
+	// 	Password: password,
+	// }
+	// facades.Orm().Query().Model(&models.User{}).Create(user)
+
+	// // Get insert id
+	// var userModel models.User
+	// facades.Orm().Query().OrderByDesc("id").Limit(1).Get(&userModel)
+	// // Upload profile picture
+	// media, _ := r.mediaUseCase.UploadMedia(ctx, "file", "pp", "user", userModel.ID)
+
+	// // if err != nil {
+	// // 	return ctx.Response().Json(http.StatusBadRequest, http.Json{
+	// // 		"message": "Failed to upload profile picture",
+	// // 		"error":   err.Error(),
+	// // 	})
+	// // }
+
+	// return ctx.Response().Json(http.StatusOK, http.Json{
+	// 	"message": "Profile picture uploaded successfully",
+	// 	"user":	 userModel,
+	// 	"media":   media,
+	// })
+	// password, _ := facades.Hash().Make("secretpassword")
+	// user := &models.User{
+	// 	Name:     "John Doe",
+	// 	Email:    "jhondoe@gmail.com",
+	// 	Password: password,
+	// }
+	// facades.Orm().Query().Model(&models.User{}).Create(user)
+
+	// // Get insert id
+	// var userModel models.User
+	// facades.Orm().Query().OrderByDesc("id").Limit(1).Get(&userModel)
+	// // Upload profile picture
+	// media, _ := r.mediaUseCase.UploadMedia(ctx, "file", "pp", "user", userModel.ID)
+
+	// // if err != nil {
+	// // 	return ctx.Response().Json(http.StatusBadRequest, http.Json{
+	// // 		"message": "Failed to upload profile picture",
+	// // 		"error":   err.Error(),
+	// // 	})
+	// // }
+
+	// return ctx.Response().Json(http.StatusOK, http.Json{
+	// 	"message": "Profile picture uploaded successfully",
+	// 	"user":	 userModel,
+	// 	"media":   media,
+	// })
 }
