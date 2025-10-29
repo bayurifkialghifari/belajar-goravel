@@ -140,3 +140,27 @@ func (r *UserController) RandomUserJob(ctx http.Context) http.Response {
 		"message": "RandomUser job dispatched successfully",
 	})
 }
+
+func (r *UserController) CsvReaderJob(ctx http.Context) http.Response {
+	// Get the file
+	file, _ := ctx.Request().File("csv")
+
+	// Upload the file to storage
+	filename := file.HashName()
+
+	file.StoreAs("csv", filename)
+
+	// Dispatch CsvReader job
+	if err := facades.Queue().Job(&jobs.CsvReaderJob{}, []queue.Arg{
+		{Type: "string", Value: filename},
+	}).Dispatch(); err != nil {
+		return ctx.Response().Json(http.StatusInternalServerError, http.Json{
+			"message": "Failed to dispatch CSV Reader job",
+			"error":   err.Error(),
+		})
+	}
+
+	return ctx.Response().Json(http.StatusOK, http.Json{
+		"message": "CSV Reader job dispatched successfully",
+	})
+}

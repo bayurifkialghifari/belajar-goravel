@@ -42,5 +42,8 @@ func V1() {
 
 		// Random User Job route
 		router.Post("/users/random", userController.RandomUserJob)
+
+		// CSV Reader Job route
+		router.Post("/users/csv-reader", userController.CsvReaderJob)
 	})
 }
