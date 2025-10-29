@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/goravel/framework/contracts/http"
+	"github.com/goravel/framework/contracts/queue"
 	"github.com/goravel/framework/errors"
 	"github.com/goravel/framework/facades"
 	"karuhundeveloper.com/gogo/app/http/requests/v1/user"
@@ -126,8 +127,8 @@ func (r *UserController) Create(ctx http.Context) http.Response {
 
 func (r *UserController) RandomUserJob(ctx http.Context) http.Response {
 	// Dispatch RandomUser job
-	if err := facades.Queue().Job(&jobs.RandomUser{
-		Name: "AnjayMabar",
+	if err := facades.Queue().Job(&jobs.RandomUser{}, []queue.Arg{
+		{Type: "string", Value: "Random User"},
 	}).Dispatch(); err != nil {
 		return ctx.Response().Json(http.StatusInternalServerError, http.Json{
 			"message": "Failed to dispatch RandomUser job",

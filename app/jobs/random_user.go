@@ -10,7 +10,6 @@ import (
 )
 
 type RandomUser struct {
-	Name string
 }
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -42,7 +41,7 @@ func (receiver *RandomUser) Handle(args ...any) error {
 	// Create a random email
 	password, _ := facades.Hash().Make("password")
 	userData := &models.User{
-		Name:     receiver.Name,
+		Name:     args[0].(string),
 		Email:    generateRandomString(5) + "@example.com",
 		Password: password,
 	}
