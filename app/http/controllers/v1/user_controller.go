@@ -66,6 +66,7 @@ func (r *UserController) Create(ctx http.Context) http.Response {
 		"email":	userCreateRequest.Email,
 		"password":	userCreateRequest.Password,
 		"confirm_password":	userCreateRequest.ConfirmPassword,
+		"image":	userCreateRequest.Image,
 	})
 
 	// Create new user facades.Hash().Make("secretpassword")

@@ -38,6 +38,6 @@ func V1() {
 
 		// User routes
 		router.Get("/users/{id}", userController.Show)
-		router.Post("/users/create", userController.Create)
+		router.Post("/users", userController.Create)
 	})
 }

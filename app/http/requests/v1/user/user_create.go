@@ -12,7 +12,7 @@ type UserCreate struct {
 	Email string `form:"email" json:"email"`
 	Password string `form:"password" json:"password"`
 	ConfirmPassword string `form:"confirm_password" json:"confirm_password"`
-	File *multipart.FileHeader `form:"file" json:"file"`
+	Image *multipart.FileHeader `form:"image" json:"image"`
 }
 
 func (r *UserCreate) Authorize(ctx http.Context) error {
@@ -29,7 +29,7 @@ func (r *UserCreate) Rules(ctx http.Context) map[string]string {
 		"email":            "required|email|unique:users,email",
 		"password":         "required|string|min_len:8|eq_field:confirm_password",
 		"confirm_password": "required|string|min_len:8|eq_field:password",
-		"file":             "nullable|image|max_file_size:2048",
+		"image":            "required_with:image|image|max_file_size:2048",
 	}
 }
 

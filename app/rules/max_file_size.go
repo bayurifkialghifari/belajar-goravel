@@ -2,6 +2,7 @@ package rules
 
 import (
 	"mime/multipart"
+	"strconv"
 
 	"github.com/goravel/framework/contracts/validation"
 )
@@ -16,17 +17,22 @@ func (receiver *MaxFileSize) Signature() string {
 
 // Passes Determine if the validation rule passes.
 func (receiver *MaxFileSize) Passes(data validation.Data, val any, options ...any) bool {
-	// val is *multipart.FileHeader
-	fileHeader, ok := val.(*multipart.FileHeader)
+	// val is a file binary
+	file := val.(multipart.FileHeader)
+
+	// File size in KB
+	fileSizeKb := file.Size / 1024
 
 	// options[0] is max size in KB
-	println(fileHeader)
+	maxSizeKb := options[0].(string)
+	maxSizeKbInt, err := strconv.ParseInt(maxSizeKb, 10, 64)
 
-	if !ok {
+	// If error occurs during parsing, return false
+	if err != nil {
 		return false
 	}
 
-	return false
+	return fileSizeKb <= maxSizeKbInt
 }
 
 // Message Get the validation error message.
