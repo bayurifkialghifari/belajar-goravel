@@ -32,6 +32,9 @@ func main() {
 		}
 	}()
 
+	// Start Scheduler server by facades.Schedule().
+	go facades.Schedule().Run()
+
 	// Listen for the OS signal
 	go func() {
 		<-quit
@@ -41,6 +44,10 @@ func main() {
 		if err := facades.Queue().Worker().Shutdown(); err != nil {
 			facades.Log().Errorf("Queue Shutdown error: %v", err)
 		}
+		if err := facades.Schedule().Shutdown(); err != nil {
+			facades.Log().Errorf("Schedule Shutdown error: %v", err)
+		}
+
 
 		os.Exit(0)
 	}()
