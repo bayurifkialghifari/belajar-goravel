@@ -22,7 +22,7 @@ func init() {
 			},
 			"database": map[string]any{
 				"driver":     "database",
-				"connection": "postgres",
+				"connection": "mysql",
 				"queue":      "default",
 				"concurrent": 1,
 			},

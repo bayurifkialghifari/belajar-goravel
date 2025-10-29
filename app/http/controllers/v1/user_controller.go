@@ -5,6 +5,7 @@ import (
 	"github.com/goravel/framework/errors"
 	"github.com/goravel/framework/facades"
 	"karuhundeveloper.com/gogo/app/http/requests/v1/user"
+	"karuhundeveloper.com/gogo/app/jobs"
 	"karuhundeveloper.com/gogo/app/models"
 	"karuhundeveloper.com/gogo/app/usecase"
 )
@@ -121,4 +122,20 @@ func (r *UserController) Create(ctx http.Context) http.Response {
 	// 	"user":	 userModel,
 	// 	"media":   media,
 	// })
+}
+
+func (r *UserController) RandomUserJob(ctx http.Context) http.Response {
+	// Dispatch RandomUser job
+	if err := facades.Queue().Job(&jobs.RandomUser{
+		Name: "AnjayMabar",
+	}).Dispatch(); err != nil {
+		return ctx.Response().Json(http.StatusInternalServerError, http.Json{
+			"message": "Failed to dispatch RandomUser job",
+			"error":   err.Error(),
+		})
+	}
+
+	return ctx.Response().Json(http.StatusOK, http.Json{
+		"message": "RandomUser job dispatched successfully",
+	})
 }

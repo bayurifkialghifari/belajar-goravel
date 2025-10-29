@@ -39,5 +39,8 @@ func V1() {
 		// User routes
 		router.Get("/users/{id}", userController.Show)
 		router.Post("/users", userController.Create)
+
+		// Random User Job route
+		router.Post("/users/random", userController.RandomUserJob)
 	})
 }
